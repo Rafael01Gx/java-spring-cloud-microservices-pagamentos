@@ -1,0 +1,12 @@
+CREATE TABLE pagamentos(
+id BIGINT PRIMARY KEY,
+valor DECIMAL(19,2) NOT NULL,
+nome VARCHAR(100) NOT NULL,
+numero VARCHAR(19) NOT NULL,
+expiracao VARCHAR(7) NOT NULL,
+codigo VARCHAR(3) NOT NULL,
+status VARCHAR(100) NOT NULL,
+pedido_id BIGINT NOT NULL,
+forma_pagamento_id BIGINT NOT NULL,
+CONSTRAINT chk_codigo_tamanho CHECK (CHAR_LENGTH(codigo) = 3)
+);
