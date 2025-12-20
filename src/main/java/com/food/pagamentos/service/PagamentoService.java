@@ -4,7 +4,6 @@ import com.food.pagamentos.dto.PagamentoDto;
 import com.food.pagamentos.model.Pagamento;
 import com.food.pagamentos.repository.PagamentoRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
