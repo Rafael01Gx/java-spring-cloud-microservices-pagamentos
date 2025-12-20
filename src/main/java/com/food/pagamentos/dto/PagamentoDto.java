@@ -1,10 +1,12 @@
 package com.food.pagamentos.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.food.pagamentos.model.Pagamento;
 import com.food.pagamentos.model.Status;
 
 import java.math.BigDecimal;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record PagamentoDto(
         Long id,
         BigDecimal valor,
