@@ -3,9 +3,15 @@ package com.food.pagamentos.model;
 public enum Status {
     CRIADO {
         public boolean proximoStatusValido(Status status) {
-          return status == Status.CONFIRMADO || status == CANCELADO ;
+          return status == Status.CONFIRMADO || status == Status.AGUARDANDO || status == CANCELADO ;
         }
     },
+    AGUARDANDO {
+        public boolean proximoStatusValido(Status status) {
+            return status == Status.CONFIRMADO || status == CANCELADO ;
+        }
+    }
+    ,
     CONFIRMADO {
         public boolean proximoStatusValido(Status status) {
             return false ;

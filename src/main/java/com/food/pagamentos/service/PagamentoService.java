@@ -1,7 +1,9 @@
 package com.food.pagamentos.service;
 
 import com.food.pagamentos.dto.PagamentoDto;
+import com.food.pagamentos.http.PedidoClient;
 import com.food.pagamentos.model.Pagamento;
+import com.food.pagamentos.model.Status;
 import com.food.pagamentos.repository.PagamentoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -13,9 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class PagamentoService {
 
     private final PagamentoRepository repository;
+    private final PedidoClient pedidoClient;
 
-    public PagamentoService(PagamentoRepository pagamentoRepository) {
+    public PagamentoService(PagamentoRepository pagamentoRepository, PedidoClient pedidoClient) {
         this.repository = pagamentoRepository;
+        this.pedidoClient = pedidoClient;
     }
 
     public Page<PagamentoDto> obterTodos(Pageable pageable) {
@@ -45,5 +49,22 @@ public class PagamentoService {
     @Transactional
     public void excluirPagamento(long id) {
         repository.deleteById(id);
+    }
+
+    @Transactional
+    public void confirmarPagamento(Long id){
+        Pagamento pagamento = repository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        pagamento.setStatus(Status.CONFIRMADO);
+        pedidoClient.atualizaPagamento(pagamento.getPedidoId());
+    }
+
+    @Transactional
+    public void alteraStatus(Long id) {
+        Pagamento pagamento = repository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        pagamento.setStatus(Status.AGUARDANDO);
     }
 }

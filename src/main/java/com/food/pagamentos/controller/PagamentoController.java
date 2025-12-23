@@ -2,6 +2,7 @@ package com.food.pagamentos.controller;
 
 import com.food.pagamentos.dto.PagamentoDto;
 import com.food.pagamentos.service.PagamentoService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
@@ -41,12 +42,22 @@ public class PagamentoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PagamentoDto> atualizar(@PathVariable @NotNull Long id ,@RequestBody @Valid PagamentoDto dto) {
-        return ResponseEntity.ok().body(service.atualizarPagamento(id,dto));
+    public ResponseEntity<PagamentoDto> atualizar(@PathVariable @NotNull Long id, @RequestBody @Valid PagamentoDto dto) {
+        return ResponseEntity.ok().body(service.atualizarPagamento(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> remover(@PathVariable @NotNull Long id) {
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/confirmar")
+    @CircuitBreaker(name = "atualizaPedido", fallbackMethod = "pagamentoAutorizadoAguardando")
+    public void confirmarPagamento(@PathVariable @NotNull Long id) {
+        service.confirmarPagamento(id);
+    }
+
+    public void pagamentoAutorizadoAguardando(Long id, Exception e) {
+        service.alteraStatus(id);
     }
 }
