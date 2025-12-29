@@ -5,6 +5,8 @@ import com.food.pagamentos.service.PagamentoService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -16,9 +18,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/pagamentos")
 public class PagamentoController {
     private final PagamentoService service;
+    private final RabbitTemplate rabbitTemplate;
 
-    public PagamentoController(PagamentoService pagamentoService) {
+    public PagamentoController(PagamentoService pagamentoService, RabbitTemplate rabbitTemplate) {
         this.service = pagamentoService;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @GetMapping
@@ -34,6 +38,9 @@ public class PagamentoController {
     @PostMapping
     public ResponseEntity<PagamentoDto> cadastrar(@RequestBody @Valid PagamentoDto dto, UriComponentsBuilder uriBuilder) {
         var pagamento = service.criarPagamento(dto);
+
+        rabbitTemplate.convertAndSend("pagamento.concluido",pagamento);
+
         return ResponseEntity
                 .created(uriBuilder.path("/pagamentos/{id}")
                         .buildAndExpand(pagamento.id())
