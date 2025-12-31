@@ -26,6 +26,15 @@ spring:
     username: ${RABBITMQ_USER:admin}
     password: ${RABBITMQ_PASSWORD:admin}
 
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 4
+          initial-interval: 5000
+          multiplier: 2
+          max-interval: 300000
+
 eureka:
   client:
     serviceUrl:
