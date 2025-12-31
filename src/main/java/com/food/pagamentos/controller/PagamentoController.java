@@ -39,7 +39,7 @@ public class PagamentoController {
     public ResponseEntity<PagamentoDto> cadastrar(@RequestBody @Valid PagamentoDto dto, UriComponentsBuilder uriBuilder) {
         var pagamento = service.criarPagamento(dto);
 
-        rabbitTemplate.convertAndSend("pagamento.concluido",pagamento);
+        rabbitTemplate.convertAndSend("pagamentos.ex",null,pagamento);
 
         return ResponseEntity
                 .created(uriBuilder.path("/pagamentos/{id}")

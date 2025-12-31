@@ -1,5 +1,6 @@
 package com.food.pagamentos.config;
 
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -11,14 +12,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PagamentoAMQPConfig {
 
-    public static final String PAGAMENTO_CONCLUIDO_QUEUE = "pagamento.concluido";
+//    public static final String PAGAMENTO_CONCLUIDO_QUEUE = "pagamento.concluido";
+//
+//    @Bean
+//    public Queue pagamentoQueue() {
+//        return QueueBuilder
+//                .durable(PAGAMENTO_CONCLUIDO_QUEUE)
+//                .build();
+//    }
 
     @Bean
-    public Queue pagamentoQueue() {
-
-        return QueueBuilder
-                .durable(PAGAMENTO_CONCLUIDO_QUEUE)
-                .build();
+    public FanoutExchange fanoutExchange() {
+        return new FanoutExchange("pagamentos.ex");
     }
 
     @Bean
